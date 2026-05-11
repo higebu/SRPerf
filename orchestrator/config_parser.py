@@ -25,7 +25,14 @@ LINE_RATES = {
   'end_dt6':6377000,
   'end_ad6':6377000,
   'end_ad4':6377000,
-  'end_am':6377000
+  'end_am':6377000,
+  # SRv6 Mobile User Plane (RFC 9433) -- starting ceiling identical to
+  # other end variants; refined empirically per behavior.
+  'h_m_gtp4_d':6868000,
+  'end_m_gtp4_e':6868000,
+  'end_m_gtp6_d':6868000,
+  'end_m_gtp6_d_di':6868000,
+  'end_m_gtp6_e':6868000
 }
 
 # Config utilities

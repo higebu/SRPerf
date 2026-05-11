@@ -20,6 +20,7 @@ def generate_all(size):
   configs.extend(generate_transit(False, size))
   configs.extend(generate_end(False, size))
   configs.extend(generate_proxy(False, size))
+  configs.extend(generate_mup(False, size))
   # Write the entire configuration
   write_config(configs)
 
@@ -139,12 +140,31 @@ def generate_proxy(write=True, size="all"):
   # Write the PROXY configuration
   write_config(configs)
 
+# Generate config for SRv6 Mobile User Plane (RFC 9433) tests
+def generate_mup(write=True, size="all"):
+  experiments = [
+    {'type': 'srv6', 'experiment': 'h_m_gtp4_d',      'rate': 'pdr', 'run': RUN},
+    {'type': 'srv6', 'experiment': 'h_m_gtp4_d',      'rate': 'mrr', 'run': RUN},
+    {'type': 'srv6', 'experiment': 'end_m_gtp4_e',    'rate': 'pdr', 'run': RUN},
+    {'type': 'srv6', 'experiment': 'end_m_gtp4_e',    'rate': 'mrr', 'run': RUN},
+    {'type': 'srv6', 'experiment': 'end_m_gtp6_d',    'rate': 'pdr', 'run': RUN},
+    {'type': 'srv6', 'experiment': 'end_m_gtp6_d',    'rate': 'mrr', 'run': RUN},
+    {'type': 'srv6', 'experiment': 'end_m_gtp6_d_di', 'rate': 'pdr', 'run': RUN},
+    {'type': 'srv6', 'experiment': 'end_m_gtp6_d_di', 'rate': 'mrr', 'run': RUN},
+    {'type': 'srv6', 'experiment': 'end_m_gtp6_e',    'rate': 'pdr', 'run': RUN},
+    {'type': 'srv6', 'experiment': 'end_m_gtp6_e',    'rate': 'mrr', 'run': RUN}
+  ]
+  configs = generate_configs(experiments, size)
+  if not write:
+    return configs
+  write_config(configs)
+
 # Parse options
 def generate():
   # Init cmd line parse
   parser = OptionParser()
   parser.add_option("-t", "--type", dest="type", type="string",
-    default="plain", help="Test type {plain|transit|end|proxy|all}")
+    default="plain", help="Test type {plain|transit|end|proxy|mup|all}")
   parser.add_option("-s", "--size", dest="size", type="string",
     default="all", help="Size type {max|min|all}")
   # Parse input parameters
@@ -158,6 +178,8 @@ def generate():
     generate_end(True, options.size)
   elif options.type == "proxy":
     generate_proxy(True, options.size)
+  elif options.type == "mup":
+    generate_mup(True, options.size)
   elif options.type == "all":
     generate_all(options.size)
   else:
