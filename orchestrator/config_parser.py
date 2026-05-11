@@ -42,14 +42,14 @@ class ConfigParser(object):
     self.configs = []
     # If the config file does not exist - we do not continue
     if os.path.exists(config_file) == False:
-        print "Error Config File %s Not Found" % config_file
+        print("Error Config File %s Not Found" % config_file)
         sys.exit(-2)
     self.parse_data(config_file)
 
   # Parse Function, load lines from file and parses one by one
   def parse_data(self, config_file):
     with open(config_file) as f:
-      configs = yaml.load(f)
+      configs = yaml.safe_load(f)
     for config in configs:
       self.configs.append(Config(type=config['type'], experiment=config['experiment'],
                                   size=config['size'], rate=config['rate'], run=config['run'],

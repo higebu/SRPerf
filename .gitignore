@@ -4,3 +4,6 @@
 *.txt
 *.pdf
 *.yaml
+*.bak
+.venv*/
+__pycache__/

@@ -105,7 +105,7 @@ class TrexPerfDriver():
             if warn is not None:
                 # There is a warning, so it is better to print out on screen 
                 # instead of suppress it.
-                print('Run ({0}) - Warning {1}'.format(i, warn))
+                print(('Run ({0}) - Warning {1}'.format(i, warn)))
             else:
                 txTotalPackets = run.getTxTotalPackets()
                 rxTotalPackets = run.getRxTotalPackets()
@@ -118,9 +118,9 @@ class TrexPerfDriver():
                 # to let the results valid.
                 rxTotalPacketsTolerance = txTotalPackets + (1.0 / 1000.0) * txTotalPackets
                 if rxTotalPackets > rxTotalPacketsTolerance:
-                    print('Run ({0}) - Warning rxTotalPackets ({1} > {2}) exceeded the threshold. Run will be skipped.'.
+                    print(('Run ({0}) - Warning rxTotalPackets ({1} > {2}) exceeded the threshold. Run will be skipped.'.
                         format(i, float(rxTotalPackets),
-                        float(rxTotalPacketsTolerance)))
+                        float(rxTotalPacketsTolerance))))
 
                     continue
 
@@ -223,10 +223,10 @@ if __name__ == '__main__':
         print('Error, experiment cannot return an empty value.')
         sys.exit(1)
 
-    print('Requested Tx Rate {0}, Mean {1}, Std. {2}'.format(
+    print(('Requested Tx Rate {0}, Mean {1}, Std. {2}'.format(
                                                  output.getRequestedTxRate(), 
                                                  output.getAverageDR(), 
-                                                 output.getStdDR()))
+                                                 output.getStdDR())))
     
     print ('Completed ...')
 

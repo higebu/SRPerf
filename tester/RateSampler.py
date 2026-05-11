@@ -35,15 +35,15 @@ class DeliveryRatioSampler:
             tuple = (curRate, rxRate, curDelRatio)
             self.results.append(tuple)
 
-            print(DeliveryRatioSampler.buildResultFormat().format(
-                curRate, rxRate, curDelRatio))
+            print((DeliveryRatioSampler.buildResultFormat().format(
+                curRate, rxRate, curDelRatio)))
 
         print("Sampling process completed...")
 
     def printResults(self):
         for tuple in self.results:
-             print(DeliveryRatioSampler.buildResultFormat().format(
-                tuple[0], tuple[1], tuple[2]))
+             print((DeliveryRatioSampler.buildResultFormat().format(
+                tuple[0], tuple[1], tuple[2])))
 
     def saveResults(self, filename):
         try:
@@ -54,7 +54,7 @@ class DeliveryRatioSampler:
                              format(tuple[0], tuple[1], tuple[2]))
 
         except IOError as e:
-            print "I/O error({0}): {1}".format(e.errno, e.strerror)
+            print("I/O error({0}): {1}".format(e.errno, e.strerror))
         else:
             writer.close()
 

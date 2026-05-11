@@ -33,7 +33,7 @@ class NoDropRateSolver:
 
     # It prints a message and exits returning the specified code.
     def printAndDie(self, message, exitCode):
-        print '{0:s}'.format(message)
+        print('{0:s}'.format(message))
         sys.exit(exitCode)
 
     # It sanitizes input parameters.
@@ -118,10 +118,10 @@ class NoDropRateSolver:
                          curRate, curDelRatio, self.dlThreshold)
                 self.results.append(tuple)
 
-                print('Log search [{0:f}/{1:f},{2:f}/{3:f}], '
+                print(('Log search [{0:f}/{1:f},{2:f}/{3:f}], '
                       '<probed:{4:f}/DR:{5:f}>, Threshold:{6:f}'.
                       format(tuple[0], tuple[1], tuple[2], tuple[3], tuple[4],
-                             tuple[5], tuple[6]))
+                             tuple[5], tuple[6])))
 
     def solve(self):
         print("Solver started...")

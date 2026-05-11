@@ -26,7 +26,7 @@ def parseInterval(arg):
     m = p.match(arg)
 
     if (m is None):
-        print "Invalid argument: {}".format(arg)
+        print("Invalid argument: {}".format(arg))
         return output
 
     start = m.group('start')
@@ -114,9 +114,9 @@ def main(argv=None):  # IGNORE:C0111
                                         repetitions, duration)
         drs = DeliveryRatioSampler(parsedRates, factory)
 
-        print("configuration: --server {0:s} --txPort {1:d} --rxPort {2:d} --pcap {3:s} --rates {4:s} --repetitions {5:d} --duration {6:d}".
+        print(("configuration: --server {0:s} --txPort {1:d} --rxPort {2:d} --pcap {3:s} --rates {4:s} --repetitions {5:d} --duration {6:d}".
                format(server, txPort, rxPort, pcap, numpy.around(parsedRates, 3),
-                      repetitions, duration))
+                      repetitions, duration)))
 
         drs.sample()
 
@@ -132,10 +132,10 @@ def main(argv=None):  # IGNORE:C0111
         ### handle keyboard interrupt ###
         return 0
     except Exception:
-        print '-' * 60
-        print "Exception in user code:"
+        print('-' * 60)
+        print("Exception in user code:")
         traceback.print_exc(file=sys.stdout)
-        print '-' * 60
+        print('-' * 60)
 
         return 2
 
