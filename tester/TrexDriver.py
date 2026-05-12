@@ -128,7 +128,9 @@ class TrexDriver():
             stream = None
             txStats = None
             rxStats = None
-            allPorts = [self.txPort, self.rxPort]
+            # Dedupe so single-port loopback (txPort == rxPort) works:
+            # T-Rex rejects `ports=[0,0]` with "duplicate port(s)".
+            allPorts = list(dict.fromkeys([self.txPort, self.rxPort]))
 
             client.connect()
 

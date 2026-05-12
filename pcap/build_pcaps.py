@@ -29,14 +29,16 @@ from scapy.all import (
 DEFAULT_SRC_MAC = "aa:bb:cc:00:00:01"   # tester TX
 DEFAULT_DST_MAC = "aa:bb:cc:00:00:02"   # SUT_rcv NIC
 
-# Address plan, IPv4 leg.
-TG_TX_V4   = "10.10.1.1"     # tester source on the SUT_rcv side
-TG_RCV_V4  = "10.10.2.1"     # tester sink on the SUT_snd side
+# Address plan, IPv4 leg.  TG_RCV = TG_TX for single-NIC loopback
+# testbeds (one VPC on Vultr): the SUT bounces its egress back over
+# the same NIC, with T-Rex RX on port 0.
+TG_TX_V4   = "10.10.1.1"
+TG_RCV_V4  = "10.10.1.1"
 PKT_V4_DST = "48.0.0.2"      # matches pkt_ipv4_dst_addr/24 in cfg
 
 # Address plan, IPv6 leg.
 TG_TX_V6   = "1:2:1::1"      # historical SRPerf "upstream user" addr
-TG_RCV_V6  = "12:2::1"       # SUT_snd-side gateway = TG_rcv_iface_ipv6_addr
+TG_RCV_V6  = "12:1::1"       # SUT_rcv-side gateway under single-NIC loopback
 PKT_V6_DST = "b::2"          # matches pkt_ipv6_dst_addr in cfg
 
 # Classic SRv6 SIDs from forwarding-behaviour.cfg.

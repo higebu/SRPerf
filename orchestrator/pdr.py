@@ -14,7 +14,7 @@ TREX_SERVER = "127.0.0.1"
 # TX port
 TX_PORT = 0
 # RX port
-RX_PORT = 1
+RX_PORT = 0  # single-port loopback (only one T-Rex port on Vultr)
 # Duration of a single RUN (time to get a sample)
 DURATION = 10
 # pcap location
@@ -22,7 +22,7 @@ PCAP_HOME = "../pcap/trex-pcap-files"
 # Define the namber of samples for a given PDR
 SAMPLES = 1
 # Starting tx rate
-STARTING_TX_RATE = 100000.0
+STARTING_TX_RATE = 10000.0  # SUT must reach 99.5% DR at this rate to anchor the search
 # NDR window
 NDR_WINDOW = 500.0
 # Lower bound for delivery ratio

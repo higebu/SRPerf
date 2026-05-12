@@ -14,7 +14,7 @@ TREX_SERVER = "127.0.0.1"
 # TX port
 TX_PORT = 0
 # RX port
-RX_PORT = 1
+RX_PORT = 0  # single-port loopback (only one T-Rex port on Vultr)
 # Duration of a single RUN (time to get a sample)
 DURATION = 10
 # pcap location
