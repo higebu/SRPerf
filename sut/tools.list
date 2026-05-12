@@ -1,9 +1,15 @@
-The list of tools needs to be installed on the Sut 
-1- ethtool (latest)
-2- iproute2 (min v4.14) 
-3- SR-tcpdump
+The list of tools that need to be installed on the Sut
+1- iproute2 >= 7.0 with SRv6 Mobile User Plane support (RFC 9433)
+     The MUP behaviours (h_m_gtp4_d, end_m_gtp4_e, end_m_gtp6_d,
+     end_m_gtp6_d_di, end_m_gtp6_e) require iproute2 with seg6 mobile
+     uplane parsing -- the higebu/iproute2 b4/seg6-mobile branch, or
+     iproute2-next once the series lands upstream.
+2- Linux kernel with CONFIG_IPV6_SEG6_LWTUNNEL=y, plus the seg6 mobile
+     uplane series in net/ipv6/seg6_local.c (the higebu/linux
+     b4/seg6-mobile branch, or net-next once merged).
+3- ethtool
 
-The list of required configuration 
+The list of required configuration
 1- disable Hyper-threading (bios)
 2- disable irqbalance (sut.cfg)
 3- disable NIC offloading features (sut.cfg)

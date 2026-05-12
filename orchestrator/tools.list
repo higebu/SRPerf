@@ -1,4 +1,5 @@
-The list of tools needs to be installed on the Orchestrator
-1- paramiko (pip)
-2- numpy (pip)
-3- pyaml (pip)
+The list of tools that need to be installed on the Orchestrator
+1- python3 >= 3.8
+2- paramiko (pip)   -- SSH driver
+3- numpy   (pip)    -- stats aggregation
+4- PyYAML  (pip)    -- testbed.yaml / config.yaml parser

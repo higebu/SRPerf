@@ -1,2 +1,10 @@
-The list of tools needs to be installed on the Tester
-1- trex 2.41
+The list of tools that need to be installed on the Tester
+1- T-Rex >= 3.04 (https://trex-tgn.cisco.com/trex/release/)
+     The tester drives T-Rex via its Python stateless API.  Install
+     T-Rex from the Cisco tarball and add its automation/trex_control_plane/
+     interactive/ to PYTHONPATH, or use the trex-stl-lib==0.3 PyPI shim
+     for offline / CI smoke tests.
+2- scapy (pip)
+     Required to (re)build the per-testbed pcaps via
+     pcap/build_pcaps.py --dst-mac <SUT_rcv MAC>
+3- numpy (pip)
