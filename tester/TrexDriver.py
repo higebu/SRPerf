@@ -7,10 +7,14 @@ import math
 from warnings import catch_warnings
 from time import sleep
 
-# get TRex APIs.
-sys.path.insert(0, "/opt/trex-core-2.41/scripts/automation/trex_control_plane/stl/")
+# get TRex APIs.  T-Rex 3.x ships the stateless library at
+# /opt/trex/current/automation/trex_control_plane/interactive as the
+# `trex.stl` package (renamed from the 2.x-era top-level
+# `trex_stl_lib`).  The PyPI `trex-stl-lib==0.3` package is unrelated
+# legacy code that imports `imp`, removed in Python 3.12.
+sys.path.insert(0, "/opt/trex/current/automation/trex_control_plane/interactive/")
 
-from trex_stl_lib.api import *
+from trex.stl.api import *
 
 class TrexOutput():
 
@@ -144,7 +148,12 @@ class TrexDriver():
             # start of the experiment some packets may be received on ports.
             client.clear_stats()
 
-            client.start(ports=[self.txPort], mult=self.rate,
+            # T-Rex's `mult` is parsed for a unit suffix; a bare numeric
+            # string is read as a `raw` multiplier (proportional to line
+            # rate), which at PDR rates blows the TX queue and crashes
+            # the binary.  Explicit `pps` keeps the rate sane.
+            mult_str = self.rate if isinstance(self.rate, str) and self.rate.endswith(('pps','bps','%')) else "%spps" % self.rate
+            client.start(ports=[self.txPort], mult=mult_str,
                          duration=self.duration)
 
             # Now we block until all packets have been sent/received. To

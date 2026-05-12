@@ -2,7 +2,14 @@ import paramiko
 import re
 from threading import Thread
 
-PRIVATE_KEY_FILE = 'id_rsa'
+import os
+# The orchestrator runs on the T-Rex tester and SSHes to the SUT.  Use
+# whichever per-orchestrator-host key exists; default to ed25519 since
+# Vultr-provisioned BMs use that one (id_rsa may not be present).
+PRIVATE_KEY_FILE = os.environ.get(
+    'SRPERF_SSH_KEY',
+    next((p for p in ('/root/.ssh/id_ed25519', '/root/.ssh/id_rsa')
+          if os.path.exists(p)), '/root/.ssh/id_ed25519'))
 
 # Object representing a generic ssh node
 class SshNode(object):
@@ -41,28 +48,22 @@ class SshNode(object):
     # Wait for the end
     self.wait()
 
-  # Wait for the end of the previous command
+  # Wait for the end of the previous command.  paramiko's chan.recv()
+  # returns bytes in Python 3; decode to str so the regex search works.
   def wait(self):
-    # Init steps
     buff = ''
-    # Exit conditions
-    u = re.compile('[$] ')
-    # Iterate until the stdout ends or the stop condition has been triggered
+    u = re.compile(r'[$#] ')  # match `$ ` (user) or `# ` (root) shell prompt
     while not u.search(buff) and self.stop == False:
-      # Rcv from the channel the stdout
-      resp = self.chan.recv(1024)
-      # if it is a sudo command, send the password
-      if re.search(".*\[sudo\].*", resp):
-        self.chan.send("%s\r" % (self.passwd))
-      # Add response on buffer
+      resp = self.chan.recv(1024).decode('utf-8', errors='replace')
+      if re.search(r".*\[sudo\].*", resp):
+        self.chan.send(("%s\r" % (self.passwd)).encode('utf-8'))
       buff += resp
-    # Done, return the response
     return buff
 
   # Run the command and wait for the end
   def run_command(self, command):
-    # Send the command on the channel with \r
-    self.chan.send(command + "\r")
+    # Send the command on the channel with \r.  Channel expects bytes.
+    self.chan.send((command + "\r").encode('utf-8'))
     # Wait for the end and take the stdout
     buff = self.wait()
     # Save in data the stdout of the last cmd

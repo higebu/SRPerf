@@ -33,8 +33,11 @@ class NoDropRateSolver:
 
     # It prints a message and exits returning the specified code.
     def printAndDie(self, message, exitCode):
+        # Raise a plain Exception (not sys.exit / SystemExit) so the
+        # orchestrator can catch it per-experiment and keep collecting
+        # results for the remaining behaviors.
         print('{0:s}'.format(message))
-        sys.exit(exitCode)
+        raise Exception(message)
 
     # It sanitizes input parameters.
     def checkAndSet(self, minTxRate, maxTxRate, epsilon, drThreshold, rateType):
