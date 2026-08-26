@@ -190,17 +190,18 @@ def pkt_end_dx6(src_mac, dst_mac):
 
 
 def pkt_end_dx2(src_mac, dst_mac):
-    """End.DX2: L2VPN -- inner is a full Ethernet frame.  SRH nh=NoNextHeader
-    (=59).  We give it a v6/UDP-wrapped L2 frame as payload.  The inner
-    dst MAC must be the tester RX port: End.DX2 emits the inner frame
-    verbatim on oif, and the RX NIC's unicast filter drops anything
-    else (no promiscuous mode in T-Rex)."""
+    """End.DX2: L2VPN -- inner is a full Ethernet frame.  SRH
+    nh=IPPROTO_ETHERNET (=143, RFC 8986): the kernel's
+    decap_and_validate() drops anything else.  The inner dst MAC must
+    be the tester RX port: End.DX2 emits the inner frame verbatim on
+    oif, and the RX NIC's unicast filter drops anything else (no
+    promiscuous mode in T-Rex)."""
     inner_eth = (
         Ether(src=src_mac, dst=RX_MAC or dst_mac)
         / IPv6(src=TG_TX_V6, dst=PKT_V6_DST) / transport_payload()
     )
     srh = IPv6ExtHdrSegmentRouting(
-        addresses=[SRV6_SID2, SRV6_SID1], segleft=0, lastentry=1, nh=59,
+        addresses=[SRV6_SID2, SRV6_SID1], segleft=0, lastentry=1, nh=143,
     )
     return (
         Ether(src=src_mac, dst=dst_mac)
@@ -223,10 +224,18 @@ def pkt_h_m_gtp4_d(src_mac, dst_mac):
 
 
 def pkt_end_m_gtp4_e(src_mac, dst_mac):
+    # The outer IPv6 SA must follow the fixed /64 Source UPF Prefix
+    # layout: the kernel derives the GTP-U IPv4 SA from SA bytes
+    # 8..11.  A plain SA like 12:1::1 yields v4_sa 0.0.0.0 and the
+    # egress route lookup drops every packet.
     sid = sid_v4_locator(TG_RCV_V4)
+    upf_src = "12:1::%x:%x:0:0" % (
+        int.from_bytes(bytes(map(int, TG_TX_V4.split(".")))[:2], "big"),
+        int.from_bytes(bytes(map(int, TG_TX_V4.split(".")))[2:], "big"),
+    )
     return (
         Ether(src=src_mac, dst=dst_mac)
-        / IPv6(src=TG_TX_V6, dst=sid, nh=4)
+        / IPv6(src=upf_src, dst=sid, nh=4)
         / IP(src=TG_TX_V4, dst=TG_RCV_V4) / ICMP()
     )
 
