@@ -28,6 +28,7 @@ from scapy.all import (
 # Defaults aligned with sut/linux/forwarding-behaviour.cfg.
 DEFAULT_SRC_MAC = "aa:bb:cc:00:00:01"   # tester TX
 DEFAULT_DST_MAC = "aa:bb:cc:00:00:02"   # SUT_rcv NIC
+RX_MAC = None                           # tester RX port; set from --rx-mac
 
 # Address plan, IPv4 leg.
 TG_TX_V4   = "10.10.1.1"     # tester source on the SUT_rcv side
@@ -190,9 +191,12 @@ def pkt_end_dx6(src_mac, dst_mac):
 
 def pkt_end_dx2(src_mac, dst_mac):
     """End.DX2: L2VPN -- inner is a full Ethernet frame.  SRH nh=NoNextHeader
-    (=59).  We give it a v6/UDP-wrapped L2 frame as payload."""
+    (=59).  We give it a v6/UDP-wrapped L2 frame as payload.  The inner
+    dst MAC must be the tester RX port: End.DX2 emits the inner frame
+    verbatim on oif, and the RX NIC's unicast filter drops anything
+    else (no promiscuous mode in T-Rex)."""
     inner_eth = (
-        Ether(src=src_mac, dst=dst_mac)
+        Ether(src=src_mac, dst=RX_MAC or dst_mac)
         / IPv6(src=TG_TX_V6, dst=PKT_V6_DST) / transport_payload()
     )
     srh = IPv6ExtHdrSegmentRouting(
@@ -287,6 +291,9 @@ def main():
                     help=f"tester TX MAC (default {DEFAULT_SRC_MAC})")
     ap.add_argument("--dst-mac", default=DEFAULT_DST_MAC,
                     help=f"SUT_rcv MAC (default {DEFAULT_DST_MAC})")
+    ap.add_argument("--rx-mac", default=None,
+                    help="tester RX-port MAC for frames the SUT emits "
+                         "verbatim (end_dx2 inner); defaults to --dst-mac")
     ap.add_argument("--out-dir", default=os.path.join(os.path.dirname(__file__),
                                                       "trex-pcap-files"))
     ap.add_argument("--size", type=int, default=64,
@@ -294,6 +301,9 @@ def main():
     ap.add_argument("--only", default=None,
                     help="generate only the named pcap (e.g. srv6-end_m_gtp4_e)")
     args = ap.parse_args()
+
+    global RX_MAC
+    RX_MAC = args.rx_mac
 
     os.makedirs(args.out_dir, exist_ok=True)
     for name, builder in BUILDERS.items():
