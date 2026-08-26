@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import os
 import sys
 
 # We need to add tester modules
@@ -15,8 +16,8 @@ TREX_SERVER = "127.0.0.1"
 TX_PORT = 0
 # RX port
 RX_PORT = 1
-# Duration of a single RUN (time to get a sample)
-DURATION = 10
+# Duration of a single RUN (paper setting; SRPERF_DURATION=2 for smoke)
+DURATION = int(os.environ.get("SRPERF_DURATION", "10"))
 # pcap location
 PCAP_HOME = "../pcap/trex-pcap-files"
 # Define the namber of samples for a given PDR

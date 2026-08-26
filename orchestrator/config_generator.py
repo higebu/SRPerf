@@ -1,13 +1,14 @@
 #!/usr/bin/python
 
+import os
 import yaml
 import sys
 from optparse import OptionParser
 
 # Config file
 CONFIG_FILE = "config.yaml"
-# Number of runs
-RUN = 10
+# Number of runs (paper setting; SRPERF_RUN=2 for a quick smoke pass)
+RUN = int(os.environ.get("SRPERF_RUN", "10"))
 
 def write_config(configs=[]):
   with open(CONFIG_FILE, 'w') as outfile:
@@ -78,8 +79,6 @@ def generate_transit(write=True, size="all"):
   experiments = [
     {'type': 'srv6', 'experiment': 't_encaps_v6', 'rate': 'pdr', 'run': RUN},
     {'type': 'srv6', 'experiment': 't_encaps_v6', 'rate': 'mrr', 'run': RUN},
-    {'type': 'srv6', 'experiment': 't_encaps_v4', 'rate': 'pdr', 'run': RUN},
-    {'type': 'srv6', 'experiment': 't_encaps_v4', 'rate': 'mrr', 'run': RUN},
     {'type': 'srv6', 'experiment': 't_encaps_l2', 'rate': 'pdr', 'run': RUN},
     {'type': 'srv6', 'experiment': 't_encaps_l2', 'rate': 'mrr', 'run': RUN},
     {'type': 'srv6', 'experiment': 't_insert_v6', 'rate': 'pdr', 'run': RUN},
@@ -102,14 +101,8 @@ def generate_end(write=True, size="all"):
     {'type': 'srv6', 'experiment': 'end_x', 'rate': 'mrr', 'run': RUN},
     {'type': 'srv6', 'experiment': 'end_t', 'rate': 'pdr', 'run': RUN},
     {'type': 'srv6', 'experiment': 'end_t', 'rate': 'mrr', 'run': RUN},
-    {'type': 'srv6', 'experiment': 'end_b6', 'rate': 'pdr', 'run': RUN},
-    {'type': 'srv6', 'experiment': 'end_b6', 'rate': 'mrr', 'run': RUN},
-    {'type': 'srv6', 'experiment': 'end_b6_encaps', 'rate': 'pdr', 'run': RUN},
-    {'type': 'srv6', 'experiment': 'end_b6_encaps', 'rate': 'mrr', 'run': RUN},
     {'type': 'srv6', 'experiment': 'end_dx6', 'rate': 'pdr', 'run': RUN},
     {'type': 'srv6', 'experiment': 'end_dx6', 'rate': 'mrr', 'run': RUN},
-    {'type': 'srv6', 'experiment': 'end_dx4', 'rate': 'pdr', 'run': RUN},
-    {'type': 'srv6', 'experiment': 'end_dx4', 'rate': 'mrr', 'run': RUN},
     {'type': 'srv6', 'experiment': 'end_dx2', 'rate': 'pdr', 'run': RUN},
     {'type': 'srv6', 'experiment': 'end_dx2', 'rate': 'mrr', 'run': RUN},
     {'type': 'srv6', 'experiment': 'end_dt6', 'rate': 'pdr', 'run': RUN},
@@ -125,14 +118,11 @@ def generate_end(write=True, size="all"):
 # Generate config for proxy tests
 def generate_proxy(write=True, size="all"):
   # Define the experiments
-  experiments = [
-    {'type': 'srv6', 'experiment': 'end_ad6', 'rate': 'pdr', 'run': RUN},
-    {'type': 'srv6', 'experiment': 'end_ad6', 'rate': 'mrr', 'run': RUN},
-    {'type': 'srv6', 'experiment': 'end_ad4', 'rate': 'pdr', 'run': RUN},
-    {'type': 'srv6', 'experiment': 'end_ad4', 'rate': 'mrr', 'run': RUN},
-    {'type': 'srv6', 'experiment': 'end_am', 'rate': 'pdr', 'run': RUN},
-    {'type': 'srv6', 'experiment': 'end_am', 'rate': 'mrr', 'run': RUN}
-  ]
+  # end_ad6 / end_ad4 / end_am (and the experiments removed from the
+  # transit/end profiles above) have no *_cfg in forwarding-behaviour.cfg
+  # and no pcap builder, so generating them only produces guaranteed-empty
+  # experiments.  Restore them here once the SUT side grows support.
+  experiments = []
   # Generate configs
   configs = generate_configs(experiments, size)
   if not write:
