@@ -174,8 +174,16 @@ class TrexDriver():
             txStats = client.get_xstats(self.txPort)
             rxStats = client.get_xstats(self.rxPort)
 
-            tOutput.setTxTotalPackets(txStats['tx_total_packets'])
-            tOutput.setRxTotalPackets(rxStats['rx_total_packets'])
+            # The af_packet PMD exposes a different xstats set than the
+            # ixgbe PMD; fall back to the generic port counters when the
+            # PMD-specific keys are absent.
+            portStats = client.get_stats(ports=[self.txPort, self.rxPort])
+            tOutput.setTxTotalPackets(
+                txStats.get('tx_total_packets',
+                            portStats[self.txPort]['opackets']))
+            tOutput.setRxTotalPackets(
+                rxStats.get('rx_total_packets',
+                            portStats[self.rxPort]['ipackets']))
 
         except STLError as e:
             print(e)
