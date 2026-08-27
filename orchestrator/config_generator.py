@@ -133,6 +133,8 @@ def generate_proxy(write=True, size="all"):
 # Generate config for SRv6 Mobile User Plane (RFC 9433) tests
 def generate_mup(write=True, size="all"):
   experiments = [
+    {'type': 'srv6', 'experiment': 'end_map',         'rate': 'pdr', 'run': RUN},
+    {'type': 'srv6', 'experiment': 'end_map',         'rate': 'mrr', 'run': RUN},
     {'type': 'srv6', 'experiment': 'h_m_gtp4_d',      'rate': 'pdr', 'run': RUN},
     {'type': 'srv6', 'experiment': 'h_m_gtp4_d',      'rate': 'mrr', 'run': RUN},
     {'type': 'srv6', 'experiment': 'end_m_gtp4_e',    'rate': 'pdr', 'run': RUN},

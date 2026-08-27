@@ -213,6 +213,17 @@ def pkt_end_dx2(src_mac, dst_mac):
 
 # ---------- SRv6 Mobile User Plane (RFC 9433) --------------------------------
 
+
+def pkt_end_map(src_mac, dst_mac):
+    """End.MAP: the incoming DA inside the locator prefix is replaced
+    with the configured mapped SID and the packet is re-forwarded via
+    the FIB.  Plain IPv6 input; no SRH required."""
+    return (
+        Ether(src=src_mac, dst=dst_mac)
+        / IPv6(src=TG_TX_V6, dst="2001:db8:f::1")
+        / transport_payload()
+    )
+
 def pkt_h_m_gtp4_d(src_mac, dst_mac):
     inner = bytes(IP(src=TG_TX_V4, dst=TG_RCV_V4) / ICMP())
     return (
@@ -286,6 +297,7 @@ BUILDERS = {
     "srv6-end_dx6":          pkt_end_dx6,
     "srv6-end_dx2":          pkt_end_dx2,
     # SRv6 Mobile User Plane (RFC 9433)
+    "srv6-end_map":          pkt_end_map,
     "srv6-h_m_gtp4_d":       pkt_h_m_gtp4_d,
     "srv6-end_m_gtp4_e":     pkt_end_m_gtp4_e,
     "srv6-end_m_gtp6_d":     pkt_end_m_gtp6_d,
