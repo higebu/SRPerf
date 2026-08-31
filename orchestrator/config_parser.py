@@ -59,9 +59,15 @@ class ConfigParser(object):
     with open(config_file) as f:
       configs = yaml.safe_load(f)
     for config in configs:
+      # LINE_RATES holds the per-experiment search ceiling for min-size
+      # frames.  Cap it by the 10GbE wire packet rate of the actual
+      # frame size (+4B FCS, +20B preamble/IFG), or the PDR solver asks
+      # T-Rex for a rate above the port line rate and the stream is
+      # rejected outright.
+      wire_pps = int(10e9 / ((int(ConfigParser.MAPPINGS[config['size']]) + 24) * 8))
       self.configs.append(Config(type=config['type'], experiment=config['experiment'],
                                   size=config['size'], rate=config['rate'], run=config['run'],
-                                  line_rate=LINE_RATES[config['experiment']]))
+                                  line_rate=min(LINE_RATES[config['experiment']], wire_pps)))
 
   # Configs getter
   def get_configs(self):
